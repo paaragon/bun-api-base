@@ -18,4 +18,4 @@ const endpoints: Endpoint[] = [
 
 const server = new Server(port, endpoints);
 
-export default server.start();
+export default server;

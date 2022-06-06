@@ -14,31 +14,39 @@ export default class Server {
     ) { }
 
     start() {
-        return {
+        Bun.serve({
             port: this.port,
-            fetch: async (request: Request) => {
-                const { url, method } = request;
-                const { pathname } = new URL(url);
+            fetch: (request: Request) => this.onFetch(request),
+            error: (error: Error) => this.onError(error),
+        });
+    }
 
-                const endpoint = this.matchRequestEndpoint(method, pathname);
-                if (!endpoint) {
-                    return this.notFound();
-                }
+    private async onFetch(request: Request) {
+        const { url, method } = request;
+        const { pathname } = new URL(url);
 
-                try {
-                    const apiRequest = await APIRequest.fromRequest(request);
-                    const apiResponse = await endpoint.handler(apiRequest);
-                    return new Response(JSON.stringify(apiResponse),
-                        { status: 200, headers: { 'Content-Type': 'application/json' } }
-                    );
-                } catch (e) {
-                    return new Response(
-                        JSON.stringify({ error: true, message: e }),
-                        { status: 200, headers: { 'Content-Type': 'application/json' } }
-                    );
-                }
-            },
+        const endpoint = this.matchRequestEndpoint(method, pathname);
+        if (!endpoint) {
+            return this.notFound();
         }
+
+        try {
+            const apiRequest = await APIRequest.fromRequest(request);
+            const apiResponse = await endpoint.handler(apiRequest);
+            return new Response(JSON.stringify(apiResponse),
+                { status: 200, headers: { 'Content-Type': 'application/json' } }
+            );
+        } catch (e) {
+            return new Response(
+                JSON.stringify({ error: true, message: e }),
+                { status: 500, headers: { 'Content-Type': 'application/json' } }
+            );
+        }
+    }
+
+    private onError(error: Error) {
+        console.log(error);
+        return new Response("Uh oh!!\n" + error.toString(), { status: 500 });
     }
 
     private notFound() {

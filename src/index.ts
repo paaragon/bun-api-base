@@ -1,3 +1,3 @@
 import api from './api/api';
 
-export default api;
+api.start();
