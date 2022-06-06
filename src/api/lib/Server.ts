@@ -19,7 +19,6 @@ export default class Server {
             fetch: async (request: Request) => {
                 const { url, method } = request;
                 const { pathname } = new URL(url);
-                console.log(url, method, pathname);
 
                 const endpoint = this.matchRequestEndpoint(method, pathname);
                 if (!endpoint) {
@@ -28,42 +27,24 @@ export default class Server {
 
                 try {
                     const apiRequest = await APIRequest.fromRequest(request);
-
                     const apiResponse = await endpoint.handler(apiRequest);
-                    return new Response(
-                        JSON.stringify(apiResponse),
-                        {
-                            status: 200,
-                            headers: {
-                                'Content-Type': 'application/json'
-                            }
-                        }
+                    return new Response(JSON.stringify(apiResponse),
+                        { status: 200, headers: { 'Content-Type': 'application/json' } }
                     );
                 } catch (e) {
                     return new Response(
                         JSON.stringify({ error: true, message: e }),
-                        {
-                            status: 200,
-                            headers: {
-                                'Content-Type': 'application/json'
-                            }
-                        }
+                        { status: 200, headers: { 'Content-Type': 'application/json' } }
                     );
                 }
-            }
+            },
         }
     }
 
     private notFound() {
         return new Response(
             JSON.stringify({ error: true, message: 'Not found' }),
-            {
-                status: 404,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }
-        );
+            { status: 404, headers: { 'Content-Type': 'application/json' } });
     }
 
     private matchRequestEndpoint(method: string, pathname: string): Endpoint | undefined {

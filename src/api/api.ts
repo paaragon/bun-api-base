@@ -12,6 +12,7 @@ const userController = new UserController();
 
 const endpoints: Endpoint[] = [
     { path: '/api/v1/user', method: 'GET', handler: userController.getUsers },
+    { path: '/api/v1/user', method: 'POST', handler: userController.getUsers },
     { path: '/api/v1/user/(.*)', method: 'GET', handler: userController.getUserById },
 ]
 
