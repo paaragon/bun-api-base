@@ -1,6 +1,8 @@
 {
+    "name": "bun-api-base",
     "scripts": {
-        "start": "bun src/index.ts"
+        "start": "bun src/index.ts",
+        "clean": "rm -rf dist out node_modules"
     },
     "dependencies": {
         "bun-types": "^0.0.83"
