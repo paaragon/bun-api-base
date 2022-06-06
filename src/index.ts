@@ -1,6 +1,7 @@
 export default {
-    port: 3001,
+    port: normalizedPort(),
     fetch(request: Request) {
+        console.log(`Server started at ${normalizedPort()}`);
         const { url, method } = request;
         const { pathname } = new URL(url);
 
@@ -14,4 +15,8 @@ export default {
             }
         )
     }
+}
+
+function normalizedPort() {
+    return process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 }
