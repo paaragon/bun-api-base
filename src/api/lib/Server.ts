@@ -23,7 +23,7 @@ export default class Server {
 
     private async onFetch(request: Request) {
         const { url, method } = request;
-        const { pathname } = new URL(url);
+        const { pathname, searchParams } = new URL(url);
 
         const endpoint = this.matchRequestEndpoint(method, pathname);
         if (!endpoint) {
@@ -31,7 +31,7 @@ export default class Server {
         }
 
         try {
-            const apiRequest = await APIRequest.fromRequest(request);
+            const apiRequest = await APIRequest.fromRequest(request, endpoint, searchParams);
             const apiResponse = await endpoint.handler(apiRequest);
             return new Response(JSON.stringify(apiResponse),
                 { status: 200, headers: { 'Content-Type': 'application/json' } }
